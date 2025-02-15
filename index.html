@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Слайдер карточек</title>
+   <style>
+      body {
+         font-family: 'Quicksand', sans-serif !important;
+         margin: 0 !important;
+         padding: 30px 0 !important;
+         background-color: #f0f0f0 !important;
+      }
+
+      /* Внешний контейнер на 1360px */
+      .main-container {
+         max-width: 1360px !important;
+         margin: 0 auto !important;
+         position: relative !important;
+         overflow: hidden !important;
+      }
+
+      /* Внутренний контейнер */
+      .slider-wrapper {
+         width: 100% !important;
+         margin: 0 auto !important;
+         position: relative !important;
+         overflow: hidden !important;
+      }
+
+      /* Контейнер для слайдов */
+      .slider-container {
+         display: flex !important;
+         transition: transform 0.5s ease !important;
+         gap: 15px !important;
+         width: max-content !important;
+      }
+
+      /* Убираем отступ после последней карточки */
+      .slider-container .card:last-child {
+         margin-right: 0 !important;
+      }
+
+      /* Карточка */
+      .card {
+         width: 228px !important;
+         height: 300px !important;
+         background-color: #fff !important;
+         border-radius: 10px !important;
+         overflow: hidden !important;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+         flex-shrink: 0 !important;
+         text-align: left !important; /* Явное выравнивание текста */
+      }
+
+      /* Остальные стили карточки */
+      .top-section {
+         height: 144px !important;
+         overflow: hidden !important;
+      }
+
+      .top-section img {
+         width: 100% !important;
+         height: 100% !important;
+         object-fit: cover !important;
+      }
+
+      .bottom-section {
+         padding: 10px !important;
+         height: 156px !important;
+         box-sizing: border-box !important;
+      }
+
+      .sub-container {
+         display: flex !important;
+         flex-direction: column !important;
+         gap: 15px !important;
+      }
+
+      .subsection:first-child {
+         display: flex !important;
+         flex-direction: column !important;
+         gap: 7px !important;
+      }
+
+      .category {
+         color: #ADADAD !important;
+         font-size: 12px !important;
+         font-weight: normal !important;
+         margin: 0 !important;
+      }
+
+      .product-name {
+         color: #253D4E !important;
+         font-size: 16px !important;
+         font-weight: bold !important;
+         margin: 0 !important;
+      }
+
+      .rating {
+         display: flex !important;
+         align-items: center !important;
+         gap: 2px !important;
+      }
+
+      .star {
+         width: 16px !important;
+         height: 16px !important;
+         background-color: #FDC040 !important;
+         clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%) !important;
+      }
+
+      .star.grey {
+         background-color: #D4D4D4 !important;
+      }
+
+      .rating-number {
+         color: #ADADAD !important;
+         font-size: 11px !important;
+         font-weight: 500 !important;
+         margin-left: 5px !important;
+      }
+
+      .brand {
+         color: #ADADAD !important;
+         font-size: 12px !important;
+         font-weight: 400 !important;
+         margin: 3px 0 0 0 !important;
+      }
+
+      .by {
+         color: #3BB77E !important;
+         font-size: 12px !important;
+         font-weight: 400 !important;
+      }
+
+      .price-button-section {
+         display: flex !important;
+         justify-content: space-between !important;
+         align-items: center !important;
+      }
+
+      .price-block {
+         width: 90px !important;
+         height: 33px !important;
+         display: flex !important;
+         align-items: center !important;
+         gap: 10px !important;
+      }
+
+      .new-price {
+         color: #3BB77E !important;
+         font-size: 18px !important;
+         font-weight: 600 !important;
+         margin: 0 !important;
+      }
+
+      .old-price {
+         color: #ADADAD !important;
+         font-size: 14px !important;
+         font-weight: 500 !important;
+         text-decoration: line-through !important;
+         margin: 0 !important;
+      }
+
+      .button-block {
+         width: 90px !important;
+         height: 33px !important;
+         display: flex !important;
+         align-items: center !important;
+         justify-content: center !important;
+         gap: 5px !important;
+         background-color: #DEF9EC !important;
+         border-radius: 5px !important;
+         cursor: pointer !important;
+      }
+
+      .button-block img {
+         width: 20px !important;
+         height: 20px !important;
+      }
+
+      .add-text {
+         color: #3BB77E !important;
+         font-size: 14px !important;
+         font-weight: 500 !important;
+         margin: 0 !important;
+      }
+
+      /* Стрелки навигации */
+      .nav-button {
+         width: 46px !important;
+         height: 46px !important;
+         background-color: #F2F3F4 !important;
+         border-radius: 50% !important;
+         display: flex !important;
+         align-items: center !important;
+         justify-content: center !important;
+         position: absolute !important;
+         top: 50% !important;
+         transform: translateY(-50%) !important;
+         cursor: pointer !important;
+         z-index: 10 !important;
+      }
+
+      .nav-button.prev {
+         left: 0 !important;
+      }
+
+      .nav-button.next {
+         right: 0 !important;
+      }
+
+      /* Медиа-запросы для адаптации */
+      @media (max-width: 480px) {
+         .slider-wrapper {
+            max-width: 228px !important;
+         }
+      }
+
+      @media (min-width: 481px) and (max-width: 600px) {
+         .slider-wrapper {
+            max-width: calc(2 * 228px + 15px) !important;
+         }
+      }
+
+      @media (min-width: 601px) and (max-width: 767px) {
+         .slider-wrapper {
+            max-width: calc(2 * 228px + 15px) !important;
+         }
+      }
+
+      @media (min-width: 768px) and (max-width: 900px) {
+         .slider-wrapper {
+            max-width: calc(3 * 228px + 2 * 15px) !important;
+         }
+      }
+
+      @media (min-width: 901px) and (max-width: 1024px) {
+         .slider-wrapper {
+            max-width: calc(3 * 228px + 2 * 15px) !important;
+         }
+      }
+
+      @media (min-width: 1025px) and (max-width: 1200px) {
+         .slider-wrapper {
+            max-width: calc(4 * 228px + 3 * 15px) !important;
+         }
+      }
+
+      @media (min-width: 1201px) and (max-width: 1359px) {
+         .slider-wrapper {
+            max-width: calc(4 * 228px + 3 * 15px) !important;
+         }
+      }
+
+      @media (min-width: 1360px) {
+         .slider-wrapper {
+            max-width: calc(5 * 228px + 4 * 15px) !important;
+         }
+      }
+   </style>
+</head>
+
+<body>
+   <div class="main-container">
+      <!-- Стрелки навигации -->
+      <div class="nav-button prev" id="prevButton">&#10094;</div>
+      <div class="nav-button next" id="nextButton">&#10095;</div>
+
+      <!-- Внутренний контейнер -->
+      <div class="slider-wrapper">
+         <div class="slider-container" id="sliderContainer"></div>
+      </div>
+   </div>
+
+   <script>
+      // Массив карточек
+      const cardsData = [
+         {
+            image: "https://static.tildacdn.com/tild6462-6366-4733-b963-326233393437/Rectangle_19.png",
+            category: "Vegetables",
+            name: "Redish 500g",
+            rating: 4,
+            brand: "Mr.food",
+            newPrice: "$2",
+            oldPrice: "$3.99"
+         },
+         {
+            image: "https://static.tildacdn.com/tild3835-3562-4630-a431-623938613335/Rectangle_19-1.png",
+            category: "Fruits",
+            name: "Potatos 1kg",
+            rating: 5,
+            brand: "Mr.food",
+            newPrice: "$1",
+            oldPrice: "$1.99"
+         },
+         {
+            image: "https://static.tildacdn.com/tild6539-3333-4230-b733-666462393537/Rectangle_19-2.png",
+            category: "Bakery",
+            name: "Tomatos 200g",
+            rating: 3,
+            brand: "Mr.food",
+            newPrice: "$0.30",
+            oldPrice: "$0.99"
+         },
+         {
+            image: "https://static.tildacdn.com/tild3733-6663-4638-a331-366465313136/Rectangle_19-3.png",
+            category: "Dairy",
+            name: "Broccoli 1kg",
+            rating: 4,
+            brand: "Mr.food",
+            newPrice: "$1.50",
+            oldPrice: "$2.99"
+         },
+         {
+            image: "https://static.tildacdn.com/tild3238-6464-4330-b862-316531383039/Rectangle_19-4.png",
+            category: "Meat",
+            name: "Green Beans 250g",
+            rating: 5,
+            brand: "Mr.food",
+            newPrice: "$1",
+            oldPrice: "$1.99"
+         }
+      ];
+
+      // Функция для создания карточки
+      function createCard(card) {
+         return `
+            <div class="card">
+               <div class="top-section">
+                  <img src="${card.image}" alt="Фотография">
+               </div>
+               <div class="bottom-section">
+                  <div class="sub-container">
+                     <div class="subsection">
+                        <p class="category">${card.category}</p>
+                        <p class="product-name">${card.name}</p>
+                     </div>
+                     <div class="subsection">
+                        <div class="rating">
+                           ${Array.from({ length: 5 }, (_, i) =>
+            `<span class="star ${i >= card.rating ? 'grey' : ''}"></span>`
+         ).join('')}
+                           <span class="rating-number">(${card.rating})</span>
+                        </div>
+                        <p class="by brand">By <span class="brand">${card.brand}</span></p>
+                     </div>
+                     <div class="subsection price-button-section">
+                        <div class="price-block">
+                           <span class="new-price">${card.newPrice}</span>
+                           <span class="old-price">${card.oldPrice}</span>
+                        </div>
+                        <div class="button-block">
+                           <img src="https://static.tildacdn.com/tild3165-3966-4335-b231-326631373736/icons8--32.png"
+                              alt="Корзина">
+                           <span class="add-text">Add</span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         `;
+      }
+
+      // Функция для инициализации слайдера
+      function initSlider() {
+         const sliderContainer = document.getElementById('sliderContainer');
+         const cardsToShow = calculateCardsToShow();
+         const duplicatedCards = [...cardsData, ...cardsData]; // Дублируем карточки для бесконечной прокрутки
+
+         // Очищаем контейнер и добавляем карточки
+         sliderContainer.innerHTML = duplicatedCards.map(createCard).join('');
+         sliderContainer.style.width = `${cardsToShow * 228 + (cardsToShow - 1) * 15}px`; // 228px (ширина карточки) + отступы между карточками
+      }
+
+      // Функция для расчета количества карточек в зависимости от ширины экрана
+      function calculateCardsToShow() {
+         const screenWidth = window.innerWidth;
+         if (screenWidth < 480) return 1; // Мобилка
+         if (screenWidth < 600) return 2; // Планшет (маленький)
+         if (screenWidth < 768) return 2; // Планшет
+         if (screenWidth < 900) return 3; // Ноутбук (маленький)
+         if (screenWidth < 1024) return 3; // Ноутбук
+         if (screenWidth < 1200) return 4; // Большие экраны
+         if (screenWidth < 1360) return 4; // Большие экраны
+         return 5; // Очень большие экраны
+      }
+
+      // Инициализация слайдера при загрузке страницы
+      initSlider();
+
+      // Обработчики для кнопок навигации
+      let currentIndex = 0;
+      const sliderContainer = document.getElementById('sliderContainer');
+
+      document.getElementById('prevButton').addEventListener('click', () => {
+         if (currentIndex === 0) {
+            // Если это начало, плавно переходим к концу дублированных карточек
+            currentIndex = cardsData.length;
+            sliderContainer.style.transition = 'none';
+            sliderContainer.style.transform = `translateX(${-currentIndex * (228 + 15)}px)`;
+            setTimeout(() => {
+               sliderContainer.style.transition = 'transform 0.5s ease';
+               currentIndex--;
+               updateSlider();
+            }, 0);
+         } else {
+            currentIndex--;
+            updateSlider();
+         }
+      });
+
+      document.getElementById('nextButton').addEventListener('click', () => {
+         if (currentIndex === cardsData.length) {
+            // Если это конец, плавно переходим к началу дублированных карточек
+            currentIndex = 0;
+            sliderContainer.style.transition = 'none';
+            sliderContainer.style.transform = `translateX(0)`;
+            setTimeout(() => {
+               sliderContainer.style.transition = 'transform 0.5s ease';
+               currentIndex++;
+               updateSlider();
+            }, 0);
+         } else {
+            currentIndex++;
+            updateSlider();
+         }
+      });
+
+      // Функция для обновления позиции слайдера
+      function updateSlider() {
+         const offset = -currentIndex * (228 + 15); // 228px (ширина карточки) + 15px (отступ)
+         sliderContainer.style.transform = `translateX(${offset}px)`;
+      }
+
+      // Адаптация при изменении размера окна
+      window.addEventListener('resize', () => {
+         initSlider();
+         updateSlider();
+      });
+   </script>
+</body>
+
+</html>
